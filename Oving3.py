@@ -124,6 +124,8 @@ for i in range(len(Oving2.sectionNumber)):
 
 if __name__ == "__main__":   
     print('Max torque:', T_max, 'kNm')
+    
+    
 
 
 

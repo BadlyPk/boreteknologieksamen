@@ -28,12 +28,21 @@ maximumWOBkg = 1000*np.array(maximumWOB)
 g = 9.81
 
 rho_s = 7840 #kg/m^3
-maxw_DC =  461.33 #kg/m
-maxw_DP = 141.375575 #kg/m
 l_joint = 9.1140 #m (30 feet)
 dp5_weight = 29.02
 dp3_weight = 23.07 
+maxw_DC = [310,310,310,243,83,32] #lbs/ft
+maxw_DCkg = 1.488*np.array(maxw_DC) #kg/m
+maxw_CS = [309.7,133,72,53.5,32,13.5] #lbm/ft
+maxw_CSkg = 1.488*np.array(maxw_CS) #kg/m
 
+h_rathole = 5 #m
+D_wh = 10 # m
+
+DP_OD = 5 * 0.0254
+DP_ID = 4.276 * 0.0254
+
+print('---Task 1---')
 #Mud pressure:
 p_mud = []
 
@@ -43,6 +52,7 @@ for i in range(len(sectionNumber)):
         )
 print('Mud pressure:', np.round(np.array(p_mud)/100000,2), "MPa")
 
+print('---Task 2---')
 #Overbalance:
 overbalance = []
 
@@ -52,6 +62,7 @@ for i in range(len(sectionNumber)):
         )
 print('Overbalance:', np.round(np.array(overbalance)/100000,2), "MPa")
 
+print('---Task 4---')
 #Required OD and length of drill collars
 OD = []
 
@@ -92,14 +103,14 @@ print('Drill collar weight:', weightDC, 'tons')
 amountDC = []
 for i in range(len(sectionNumber)):
     amountDC.append(
-        round((weightDC[i]/maxw_DC)/l_joint)
+        round(math.ceil((weightDC[i]/maxw_DCkg[i])/l_joint))
         )
 print('Amount of drill collars:', amountDC)
 
 lengthDC = []
 for i in range(len(sectionNumber)):
     lengthDC.append(
-        round((amountDC[i]*l_joint),1)
+        round((amountDC[i]*l_joint),2)
         )
 print('Length of the drill collars:', lengthDC, 'm')
 
@@ -109,30 +120,20 @@ print('---Task 5---')
 BuoWeightDC = []
 for i in range(len(sectionNumber)):
     BuoWeightDC.append(
-        round(buoyancyfactor[i]*lengthDC[i]*(maxw_DC/1000),1)
+        round(buoyancyfactor[i]*lengthDC[i]*(maxw_DCkg[i]/1000),1)
         )
 print('Buoyed weight of drill collars:',BuoWeightDC, ' tons')
 
 theoreticalLengthDP5 = []
 theoreticalLengthDP3 = []
 
-
 for i in range(len(endDepth)):
-    if endDepth[i] < 3800:
-        theoreticalLengthDP5.append(
-            endDepth[i]-amountDC[i]*l_joint
-            )    
-        theoreticalLengthDP3.append(
-            0
-            )     
-    elif endDepth[i] > 3800:
-        theoreticalLengthDP3.append(
-            endDepth[i]+100-2275-amountDC[i]*l_joint
-            )
-        theoreticalLengthDP5.append(
-            abs(endDepth[i]+100-2275-amountDC[i]*l_joint-endDepth[i]-amountDC[i]*l_joint)
-            )
-        
+    if endDepth[i] > 3800:
+        theoreticalLengthDP3.append(round(endDepth[i]-2275+105-lengthDC[i],2))
+    else:
+        theoreticalLengthDP3.append(0)
+    theoreticalLengthDP5.append(round(endDepth[i]-lengthDC[i]-theoreticalLengthDP3[i],2))
+    
 print('Theoretical length of DP5:', theoreticalLengthDP5, 'm')
 print('Theoretical length of DP3:', theoreticalLengthDP3, 'm')
 
@@ -185,9 +186,76 @@ for i in range(len(sectionNumber)):
         )
 print('Total buoyed string weight:', totalBuoStringWeight)
 
-#
+print('---Task 6---')
 
+lengthCS = []*len(sectionNumber)
+for i in range(0,4):
+    lengthCS.append(
+        round(endDepth[i] - h_rathole - D_wh,2)
+        )
+for i in range(4,6):
+    lengthCS.append(
+        round(endDepth[i]-endDepth[i-1]+100)
+        )
+print('The length of the casing and liner:', lengthCS, 'm')
 
+BuoWeightCS = []
+for i in range(len(sectionNumber)):
+    BuoWeightCS.append(
+        round(buoyancyfactor[i]*lengthCS[i]*(maxw_CSkg[i]/1000),1)
+        )
+print('Buoyed weight of the casing/liner:', BuoWeightCS, 'tons')
 
+Buoyed = []
+for i in range(len(sectionNumber)):
+    if i == 4:
+        Weight = 0
+        B = 1 - mudWeightkgm3[i] / rho_s
+        Lenght_liner = endDepth[i] - endDepth[i - 1] + 100
+        Weight += Lenght_liner * B * maxw_CSkg[i]
+        Length = math.ceil((endDepth[i - 1] - 100 - 5) / l_joint) * l_joint
+        Weight += Length * dp5_weight * B
+        Buoyed.append(round(Weight * 10 ** (-3), 2))
+    elif i == 5:
+        Weight = 0
+        B = 1 - mudWeightkgm3[i] / rho_s
+        Lenght_liner = endDepth[i] - endDepth[i - 1] + 100
+        Weight += Lenght_liner * B * maxw_CSkg[i]
+        Length = (
+            math.ceil(((endDepth[i - 1] - 100) - (endDepth[i - 2] - 100) - 5) / l_joint) * l_joint
+        )
+        Weight += Length * 15.5 * 1.48816394 * B
+        Length = math.ceil((endDepth[i - 2] - 100 - 5) / l_joint) * l_joint
+        Weight += Length * dp5_weight * B
+        Buoyed.append(round(Weight * 10 ** (-3), 2))
+    else:
+        Weight = 0
+        B = 1 - mudWeightkgm3[i] / rho_s
+        Length = endDepth[i] - h_rathole - D_wh
+        Weight += maxw_CSkg[i] * Length * B
+        Buoyed.append(round(Weight * 10 ** (-3), 2))
 
+print('Buoyed weight of casing/liner + DP:', Buoyed)
 
+print('---Task 7---')
+
+tensionString = []
+for i in range(len(sectionNumber)):
+    Tension = totalBuoStringWeight[i] * g / (np.pi / 4 * (DP_OD ** 2 - DP_ID ** 2))
+    tensionString.append(round(Tension * 10 ** (-3), 2))
+
+print('Drill string tension:', tensionString)
+
+tensionCasing = []
+for i in range(len(sectionNumber)):
+    if i == 4:
+        Tension = Buoyed[i] * g / (np.pi / 4 * (DP_OD ** 2 - DP_ID ** 2))
+        tensionCasing.append(round(Tension * 10 ** (-3), 2))
+    elif i == 5:
+        Tension = Buoyed[i] * g / (np.pi / 4 * (DP_OD ** 2 - DP_ID ** 2))
+        tensionCasing.append(round(Tension * 10 ** (-3), 2))
+    else:
+        Tension = Buoyed[i] * g/ (np.pi / 4 * (casingODM[i] ** 2 - casingIDM[i] ** 2))
+        tensionCasing.append(round(Tension * 10 ** (-3), 2))
+
+print('Casing tension:', tensionCasing)

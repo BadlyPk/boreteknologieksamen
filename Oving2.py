@@ -42,7 +42,8 @@ D_wh = 10 # m
 DP_OD = 5 * 0.0254
 DP_ID = 4.276 * 0.0254
 
-print('---Task 1---')
+if __name__ == "__main__":
+    print('---Task 1---')
 #Mud pressure:
 p_mud = []
 
@@ -50,19 +51,25 @@ for i in range(len(sectionNumber)):
     p_mud.append(
         mudWeightkgm3[i]*g*endDepth[i]
         )
-print('Mud pressure:', np.round(np.array(p_mud)/100000,2), "MPa")
 
-print('---Task 2---')
+
+if __name__ == "__main__":
+    print('Mud pressure:', np.round(np.array(p_mud)/100000,2), "MPa")
+
+if __name__ == "__main__":
+    print('---Task 2---')
 #Overbalance:
-overbalance = []
+overbalance = []        
 
 for i in range(len(sectionNumber)):
     overbalance.append(
         p_mud[i]-(porePressurekgm3[i]*g*endDepth[i])
         )
-print('Overbalance:', np.round(np.array(overbalance)/100000,2), "MPa")
+if __name__ == "__main__":    
+    print('Overbalance:', np.round(np.array(overbalance)/100000,2), "MPa")
 
-print('---Task 4---')
+if __name__ == "__main__":
+    print('---Task 4---')
 #Required OD and length of drill collars
 OD = []
 
@@ -70,10 +77,12 @@ for i in range(len(sectionNumber)):
     OD.append(
         math.sqrt((holeSizeInch[i]**2)-((4*flowRatem3s[i])/(criticalSpeedms[i]*math.pi)))
         )
-print('OD:', np.round(np.array(OD),2),'m')
+if __name__ == "__main__":    
+    print('OD:', np.round(np.array(OD),2),'m')
 
 clearedOD = [i - 2 for i in OD]
-print('Maximum DC OD:', np.round(np.array(clearedOD),3), 'inches')
+if __name__ == "__main__":
+    print('Maximum DC OD:', np.round(np.array(clearedOD),3), 'inches')
 possibleOD = [11+1/4,11,10,9+1/2,9,8+1/4,8,7+3/4,7+1/4,7,6+3/4,6+1/2,6+1/4,6,5+3/4,5,4+7/8,4+3/4,4+1/4,4+1/8,3+3/4,3+1/2,3+3/8,3+1/8+2+7/8]
 usedOD = []
 
@@ -82,7 +91,9 @@ for wanted_length in clearedOD:
     if wanted_length >= available_length:
       usedOD.append(available_length)
       break
-print('Chosen OD:', usedOD, 'inches')
+
+if __name__ == "__main__":
+    print('Chosen OD:', usedOD, 'inches')
 
 #Buoyancy factor
 buoyancyfactor = []
@@ -97,7 +108,8 @@ for i in range(len(sectionNumber)):
     weightDC.append(
         maximumWOBkg[i]/(0.85*buoyancyfactor[i])
         )
-print('Drill collar weight:', weightDC, 'tons')
+if __name__ == "__main__":
+    print('Drill collar weight:', weightDC, 'tons')
      
 #Amount of collars
 amountDC = []
@@ -105,24 +117,28 @@ for i in range(len(sectionNumber)):
     amountDC.append(
         round(math.ceil((weightDC[i]/maxw_DCkg[i])/l_joint))
         )
-print('Amount of drill collars:', amountDC)
+if __name__ == "__main__":
+    print('Amount of drill collars:', amountDC)
 
 lengthDC = []
 for i in range(len(sectionNumber)):
     lengthDC.append(
         round((amountDC[i]*l_joint),2)
         )
-print('Length of the drill collars:', lengthDC, 'm')
+if __name__ == "__main__":
+    print('Length of the drill collars:', lengthDC, 'm')
 
 #
 
-print('---Task 5---')
+if __name__ == "__main__":
+    print('---Task 5---')
 BuoWeightDC = []
 for i in range(len(sectionNumber)):
     BuoWeightDC.append(
         round(buoyancyfactor[i]*lengthDC[i]*(maxw_DCkg[i]/1000),1)
         )
-print('Buoyed weight of drill collars:',BuoWeightDC, ' tons')
+if __name__ == "__main__":
+    print('Buoyed weight of drill collars:',BuoWeightDC, ' tons')
 
 theoreticalLengthDP5 = []
 theoreticalLengthDP3 = []
@@ -133,60 +149,69 @@ for i in range(len(endDepth)):
     else:
         theoreticalLengthDP3.append(0)
     theoreticalLengthDP5.append(round(endDepth[i]-lengthDC[i]-theoreticalLengthDP3[i],2))
-    
-print('Theoretical length of DP5:', theoreticalLengthDP5, 'm')
-print('Theoretical length of DP3:', theoreticalLengthDP3, 'm')
+
+if __name__ == "__main__":
+    print('Theoretical length of DP5:', theoreticalLengthDP5, 'm')
+    print('Theoretical length of DP3:', theoreticalLengthDP3, 'm')
 
 amountDP5 = []
 for i in range(len(sectionNumber)):
     amountDP5.append(
         math.ceil((theoreticalLengthDP5[i]/l_joint))
         )
-print('Amount of DP5:', amountDP5)
+if __name__ == "__main__":
+    print('Amount of DP5:', amountDP5)
 
 amountDP3 = []
 for i in range(len(sectionNumber)):
     amountDP3.append(
         math.ceil((theoreticalLengthDP3[i]/l_joint))
         )
-print('Amount of DP5:', amountDP3)
+if __name__ == "__main__":
+    print('Amount of DP5:', amountDP3)
 
 lengthDP5 = []
 for i in range(len(sectionNumber)):
     lengthDP5.append(
         round(amountDP5[i]*l_joint,2)
         )
-print('Length of DP5:', lengthDP5, 'm')
+if __name__ == "__main__":
+    print('Length of DP5:', lengthDP5, 'm')
 
 lengthDP3 = []
 for i in range(len(sectionNumber)):
     lengthDP3.append(
         round(amountDP3[i]*l_joint,2)
         )
-print('Length of DP3:', lengthDP3, 'm')
+if __name__ == "__main__":
+    print('Length of DP3:', lengthDP3, 'm')
 
 BuoWeightDP5 = []
 for i in range(len(sectionNumber)):
     BuoWeightDP5.append(
         round(buoyancyfactor[i]*lengthDP5[i]*(dp5_weight/1000),1)
         )
-print('Buoyed weight of DP5:', BuoWeightDP5, ' tons')
+if __name__ == "__main__":
+    print('Buoyed weight of DP5:', BuoWeightDP5, ' tons')
 
 BuoWeightDP3 = []
 for i in range(len(sectionNumber)):
     BuoWeightDP3.append(
         round(buoyancyfactor[i]*lengthDP3[i]*(dp3_weight/1000),1)
         )
-print('Buoyed weight of DP5:', BuoWeightDP3, ' tons')
+if __name__ == "__main__":
+    print('Buoyed weight of DP5:', BuoWeightDP3, ' tons')
 
 totalBuoStringWeight = []
 for i in range(len(sectionNumber)):
     totalBuoStringWeight.append(
         round(BuoWeightDC[i]+BuoWeightDP5[i]+BuoWeightDP3[i],1)
         )
-print('Total buoyed string weight:', totalBuoStringWeight)
+if __name__ == "__main__":
+    print('Total buoyed string weight:', totalBuoStringWeight)
 
-print('---Task 6---')
+if __name__ == "__main__":
+    print('---Task 6---')
 
 lengthCS = []*len(sectionNumber)
 for i in range(0,4):
@@ -197,14 +222,16 @@ for i in range(4,6):
     lengthCS.append(
         round(endDepth[i]-endDepth[i-1]+100)
         )
-print('The length of the casing and liner:', lengthCS, 'm')
+if __name__ == "__main__":
+    print('The length of the casing and liner:', lengthCS, 'm')
 
 BuoWeightCS = []
 for i in range(len(sectionNumber)):
     BuoWeightCS.append(
         round(buoyancyfactor[i]*lengthCS[i]*(maxw_CSkg[i]/1000),1)
         )
-print('Buoyed weight of the casing/liner:', BuoWeightCS, 'tons')
+if __name__ == "__main__":
+    print('Buoyed weight of the casing/liner:', BuoWeightCS, 'tons')
 
 Buoyed = []
 for i in range(len(sectionNumber)):
@@ -235,16 +262,19 @@ for i in range(len(sectionNumber)):
         Weight += maxw_CSkg[i] * Length * B
         Buoyed.append(round(Weight * 10 ** (-3), 2))
 
-print('Buoyed weight of casing/liner + DP:', Buoyed)
+if __name__ == "__main__":
+    print('Buoyed weight of casing/liner + DP:', Buoyed)
 
-print('---Task 7---')
+if __name__ == "__main__":
+    print('---Task 7---')
 
 tensionString = []
 for i in range(len(sectionNumber)):
     Tension = totalBuoStringWeight[i] * g / (np.pi / 4 * (DP_OD ** 2 - DP_ID ** 2))
     tensionString.append(round(Tension * 10 ** (-3), 2))
 
-print('Drill string tension:', tensionString)
+if __name__ == "__main__":
+    print('Drill string tension:', tensionString)
 
 tensionCasing = []
 for i in range(len(sectionNumber)):
@@ -258,4 +288,5 @@ for i in range(len(sectionNumber)):
         Tension = Buoyed[i] * g/ (np.pi / 4 * (casingODM[i] ** 2 - casingIDM[i] ** 2))
         tensionCasing.append(round(Tension * 10 ** (-3), 2))
 
-print('Casing tension:', tensionCasing)
+if __name__ == "__main__":
+    print('Casing tension:', tensionCasing)

@@ -72,6 +72,12 @@ P_DW = P_gen - epsilon_loss*P_gen
 v_b_drilling = []
 v_b_tripping = []
 
+L_stand = 27.5 #m
+L_joint = 12 #m
+
+t_stand = []
+t_joint = []
+
 for i in range(len(Oving2.sectionNumber)):
 
     v_f_drilling = P_DW/F_drawworks_drilling[i]
@@ -79,24 +85,45 @@ for i in range(len(Oving2.sectionNumber)):
     
     v_f_tripping = P_DW/F_drawworks_tripping[i]
     v_b_tripping.append(round(v_f_tripping/n_theo,2))
+    
+    t_stand.append(round(L_stand/v_b_drilling[i],2))
+    t_joint.append(round(L_joint/v_b_tripping[i],2))
 
 if __name__ == "__main__":    
     print('Pulling speed (drill string):', v_b_drilling, 'm/s')
     print('Pulling speed (casing/liner + DP):', v_b_tripping, 'm/s')
+    print('Time to pull one stand of DP:', t_stand, 's')
+    print('Time to pull one joint of casing:', t_joint, 's')
 
+DS_yieldStrength = [75000,75000,75000,75000,75000,75000]
+casingLinerDP_yieldStrength = [65000,55000,80000,80000,75000,75000]
+SF_DS_tension = []
+SF_casingLinerDP_tension = []
 
+for i in range(len(Oving2.sectionNumber)):
+    SF_DS_tension.append(
+        round(DS_yieldStrength[i]/(Oving2.tensionString[i]*145.038),2) #145.038 is from MPa to psi
+        )
+    SF_casingLinerDP_tension.append(
+        round(casingLinerDP_yieldStrength[i]/(Oving2.tensionCasing[i]*145.038),2) #145.038 is from MPa to psi
+        )
 
+if __name__ == "__main__":   
+    print('Drill string tension SF:', SF_DS_tension)
+    print('Casing/liner + DP tension SF:', SF_casingLinerDP_tension)
+    
+T_max = []
 
+for i in range(len(Oving2.sectionNumber)):
+    tau_crit = math.sqrt(
+        (((DS_yieldStrength[i]/145.038)**2)-(Oving2.tensionString[i])**2)/3
+        )
+    T_max.append(
+        round(tau_crit*1000*(((Oving2.DP_OD**2)-(Oving2.DP_ID**2))*(Oving2.DP_OD+Oving2.DP_ID)*math.pi)/16,2)
+        )
 
-
-
-
-
-
-
-
-
-
+if __name__ == "__main__":   
+    print('Max torque:', T_max, 'kNm')
 
 
 

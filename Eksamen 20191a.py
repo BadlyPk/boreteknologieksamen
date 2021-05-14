@@ -13,9 +13,12 @@ viscP = 30
 vis = 30/1000
 
 rho_mud = 1.8*1000
+rho_s = 7840 #kg/m^3
 Q = 2200/1000/60
 critSpeed = 125/60
 L = 3700
+
+WOB = 15 #tons
 
 d = 8.5 #inches
 
@@ -25,6 +28,9 @@ d_hole = d*0.0254
 
 n_nozzles = 5
 d_nozzle = (14/32)*0.0254
+
+l_joint = 9.144
+w_joint_per_meter = 111.6
 
 A_pipe = (math.pi*((d_DP_inner/2)**2))
 
@@ -77,3 +83,18 @@ for available_length in possibleOD:
       usedOD.append(available_length)
       break
 print('Chosen OD:', usedOD, 'inches')
+
+buoyancyfactor = 1-rho_mud/rho_s
+
+DC_weight = (WOB*1000)/(0.85*buoyancyfactor)
+
+
+eachDC_weight = l_joint*w_joint_per_meter
+
+amountDC = math.ceil(DC_weight/eachDC_weight)
+
+print(amountDC)
+
+lengthDC = amountDC*l_joint
+print(lengthDC)
+

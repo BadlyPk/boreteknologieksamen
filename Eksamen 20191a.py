@@ -14,11 +14,14 @@ vis = 30/1000
 
 rho_mud = 1.8*1000
 Q = 2200/1000/60
+critSpeed = 125/60
 L = 3700
+
+d = 8.5 #inches
 
 d_DP_inner = 4.276*0.0254
 d_DP_outer = 5*0.0254
-d_hole = 8.5*0.0254
+d_hole = d*0.0254
 
 n_nozzles = 5
 d_nozzle = (14/32)*0.0254
@@ -61,3 +64,16 @@ print('ECD:', ECD/1000, 'Sg')
 
 #Pressure window minimum is the mud weight minus swab effects. Maximum is ECD plus surge pressure
 
+d_DCM = round(math.sqrt((d_hole**2)-((4*Q)/(critSpeed*math.pi))),4)
+d_DCInches = round(d_DCM/0.02542,2)
+
+print(d_DCInches)
+
+possibleOD = [11+1/4,11,10,9+1/2,9,8+1/4,8,7+3/4,7+1/4,7,6+3/4,6+1/2,6+1/4,6,5+3/4,5,4+7/8,4+3/4,4+1/4,4+1/8,3+3/4,3+1/2,3+3/8,3+1/8+2+7/8]
+usedOD = []
+
+for available_length in possibleOD:
+    if d_DCInches >= available_length:
+      usedOD.append(available_length)
+      break
+print('Chosen OD:', usedOD, 'inches')

@@ -79,7 +79,7 @@ d_DCInches = round(d_DCM/0.02542,2)
 
 print(d_DCInches)
 
-possibleOD = [11+1/4,11,10,9+1/2,9,8+1/4,8,7+3/4,7+1/4,7,6+3/4,6+1/2,6+1/4,6,5+3/4,5,4+7/8,4+3/4,4+1/4,4+1/8,3+3/4,3+1/2,3+3/8,3+1/8+2+7/8]
+possibleOD = [11+1/4,11,10,9+3/4,9+1/2,9,8+1/4,8,7+3/4,7+1/4,7,6+3/4,6+1/2,6+1/4,6,5+3/4,5+1/4,5,4+7/8,4+3/4,4+1/4,4+1/8,3+3/4,3+1/2,3+3/8,3+1/8+2+7/8]
 usedOD = []
 
 for available_length in possibleOD:
@@ -118,7 +118,6 @@ crossSectionAreaDP = (math.pi/4)*(d_DP_outer**2-d_DP_inner**2)
 
 maxTrippingPa = ((BuoWeightDP5*1000)*g)/crossSectionAreaDP
 maxDrillingPa = (((BuoWeightDP5-WOB)*1000)*g)/crossSectionAreaDP
-print(maxTrippingPa, maxDrillingPa)
 
 maxTrippingPSI = maxTrippingPa*0.000145037738
 maxDrillingPSI = maxDrillingPa*0.000145037738
@@ -143,6 +142,6 @@ print('Burst pressure:', P_burst, 'bar')
 
 frac_gradient = (P_burst*(10**5)/(S_f*casing_length*g)+(rho_g*1000))/1000 #Sg
 
-print(frac_gradient)
+print('Frac gradient:', frac_gradient)
 
 

@@ -95,10 +95,31 @@ pipe_grade = 135
 OD = 5
 ID = [4, 4.216,]
 pipe_weight = [38.10,29.02]
+SF_pipes = []
 
 for i in range(len(ID)):
     SF_max = (pipe_grade*((OD**2)-(ID[i]**2))) / (pipe_weight[i])
+    SF_pipes.append(SF_max)
     print('The pipe with weight', pipe_weight[i], 'has a SF of:', round(SF_max,2))
+    
+
+actualSF = SF*max(SF_pipes)/min(SF_pipes)
+print('The actual SF is:', round(actualSF,2))
+
+rho_gas = 188
+new_rho_mud = 1790
+P_frac = 1800*g*2000 #1800 er frac pressure, ved section start (2000)
+P_pore = 1750*g*4500 #1750 er pore pressure, ved section end (4500)
+H = 4500-2000
+A = (math.pi/4)*(((12+1/4)*0.0254)**2-(d_DP_outer)**2)
+
+V_influx = (P_frac*A)/(P_pore) * ((P_pore-P_frac-new_rho_mud*g*H)/(g*(rho_gas-new_rho_mud)))
+
+print('Kick tolerance:', round(V_influx,4))
+
+
+
+
 
 
 

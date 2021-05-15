@@ -134,9 +134,15 @@ rho_g = 0.188 #Sg
 casing_size = 9.625
 casing_collapse = 7340
 casing_wall_thickness = 0.545
+casing_length = 2275
+S_f = 1.1
 
 P_burst = 2*casing_collapse*(casing_wall_thickness*0.0254)/(casing_size*0.0254)
 
-print(P_burst)
+print('Burst pressure:', P_burst, 'bar')
+
+frac_gradient = (P_burst*(10**5)/(S_f*casing_length*g)+(rho_g*1000))/1000 #Sg
+
+print(frac_gradient)
 
 

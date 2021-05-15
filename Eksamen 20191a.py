@@ -11,6 +11,7 @@ import Oving3
 
 viscP = 30
 vis = 30/1000
+g = 9.81
 
 rho_mud = 1.8*1000
 rho_s = 7840 #kg/m^3
@@ -31,6 +32,9 @@ d_nozzle = (14/32)*0.0254
 
 l_joint = 9.144
 w_joint_per_meter = 111.6
+
+w_dp5_per_meter = 29.02 #kg per m
+l_dp5 = 27.43 #m
 
 A_pipe = (math.pi*((d_DP_inner/2)**2))
 
@@ -62,10 +66,10 @@ if Re_pipe > 4000 and Re_ann > 4000:
     deltaP_bit = 0.55*rho_mud*(v_bit**2)
     #print(deltaP_bit/100000)
 
-p_SPP = deltaP_ann+deltaP_bit+deltaP_pipe
+p_SPP = round(deltaP_ann+deltaP_bit+deltaP_pipe,1)
 print('SPP:', p_SPP/100000, 'bar')
 
-ECD = rho_mud + deltaP_ann/(9.81*L)
+ECD = round(rho_mud + deltaP_ann/(g*L),2)
 print('ECD:', ECD/1000, 'Sg')
 
 #Pressure window minimum is the mud weight minus swab effects. Maximum is ECD plus surge pressure
@@ -88,13 +92,51 @@ buoyancyfactor = 1-rho_mud/rho_s
 
 DC_weight = (WOB*1000)/(0.85*buoyancyfactor)
 
-
 eachDC_weight = l_joint*w_joint_per_meter
 
 amountDC = math.ceil(DC_weight/eachDC_weight)
 
-print(amountDC)
+print('Amount of Drill Collars:', amountDC)
 
 lengthDC = amountDC*l_joint
-print(lengthDC)
+print('Drill collar length:', lengthDC, 'm')
+
+weightDC = amountDC + DC_weight
+
+
+amountDP5 = math.ceil((L-lengthDC)/l_dp5)
+weightperDP5 = w_dp5_per_meter*l_dp5
+weightDP5 = amountDP5*weightperDP5
+
+dryWeight = (weightDP5 + weightDC)/1000
+
+BuoWeightDP5 = round(dryWeight * buoyancyfactor,2)
+
+print('Buoyed weight:', BuoWeightDP5, 'tons')
+
+crossSectionAreaDP = (math.pi/4)*(d_DP_outer**2-d_DP_inner**2)
+
+maxTrippingPa = ((BuoWeightDP5*1000)*g)/crossSectionAreaDP
+maxDrillingPa = (((BuoWeightDP5-WOB)*1000)*g)/crossSectionAreaDP
+print(maxTrippingPa, maxDrillingPa)
+
+maxTrippingPSI = maxTrippingPa*0.000145037738
+maxDrillingPSI = maxDrillingPa*0.000145037738
+
+maxTrippingPSI = maxTrippingPSI * 2
+maxDrillingPSI = maxDrillingPSI * 3
+
+print('The grade has to be at least:', math.ceil(maxDrillingPSI/1000))
+
+rho_g = 0.188 #Sg
+
+#Look in table for right OD size, for section 4. Look for closest grade to DP, which in this case is C-95. Then look for correct ID. 
+casing_size = 9.625
+casing_collapse = 7340
+casing_wall_thickness = 0.545
+
+P_burst = 2*casing_collapse*(casing_wall_thickness*0.0254)/(casing_size*0.0254)
+
+print(P_burst)
+
 

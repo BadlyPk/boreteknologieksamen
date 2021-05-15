@@ -41,8 +41,6 @@ d_DP_inner = 4*0.0254
 d_DCM = round(math.sqrt((d_hole**2)-((4*Q)/(critSpeed*math.pi))),4)
 d_DCInches = round(d_DCM/0.02542,2)
 
-print(d_DCInches)
-
 possibleOD = [11+1/4,11,10,9+3/4,9+1/2,9,8+1/4,8,7+3/4,7+1/4,7,6+3/4,6+1/2,6+1/4,6,5+3/4,5+1/4,5,4+7/8,4+3/4,4+1/4,4+1/8,3+3/4,3+1/2,3+3/8,3+1/8+2+7/8]
 usedOD = []
 
@@ -53,7 +51,6 @@ for available_length in possibleOD:
 print('Chosen OD:', usedOD, 'inches')
 
 buoyancyfactor = 1-rho_mud/rho_s
-print(buoyancyfactor)
 
 DC_weight = (WOB*1000)/(0.85*buoyancyfactor)
 
@@ -93,7 +90,7 @@ print('Safety factor:', round(SF,2))
 
 pipe_grade = 135
 OD = 5
-ID = [4, 4.216,]
+ID = [4, 4.276,]
 pipe_weight = [38.10,29.02]
 SF_pipes = []
 

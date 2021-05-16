@@ -4,6 +4,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 
+from sympy.solvers import solve
+from sympy import Symbol
+
 import Oving2
 import Oving3
 
@@ -90,14 +93,14 @@ print('Safety factor:', round(SF,2))
 
 pipe_grade = 135
 OD = 5
-ID = [4, 4.276,]
+ID = [4, 4.276]
 pipe_weight = [38.10,29.02]
 SF_pipes = []
 
 for i in range(len(ID)):
     SF_max = (pipe_grade*((OD**2)-(ID[i]**2))) / (pipe_weight[i])
     SF_pipes.append(SF_max)
-    print('The pipe with weight', pipe_weight[i], 'has a SF of:', round(SF_max,2))
+    print('The pipe with weight', pipe_weight[i], 'kg, has a SF of:', round(SF_max,2))
     
 
 actualSF = SF*max(SF_pipes)/min(SF_pipes)
@@ -105,18 +108,60 @@ print('The actual SF is:', round(actualSF,2))
 
 rho_gas = 188
 new_rho_mud = 1790
-P_frac = 1800*g*2000 #1800 er frac pressure, ved section start (2000)
-P_pore = 1750*g*4500 #1750 er pore pressure, ved section end (4500)
-H = 4500-2000
+rho_frac = 1800
+rho_pore = 1750
+h_end = 4500 #Section depth end
+h_start = 2000 #Section depth start
+P_frac = rho_frac*g*h_start #1800 er frac pressure, ved section start (2000)
+P_pore = rho_pore*g*h_end #1750 er pore pressure, ved section end (4500)
+H = h_end-h_start
 A = (math.pi/4)*(((12+1/4)*0.0254)**2-(d_DP_outer)**2)
 
 V_influx = (P_frac*A)/(P_pore) * ((P_pore-P_frac-new_rho_mud*g*H)/(g*(rho_gas-new_rho_mud)))
 
 print('Kick tolerance:', round(V_influx,4))
 
+V_influx_limit = 4 #m^3
+
+#V_influx_limit = (rho_frac*x*A/P_pore)*((P_pore-rho_frac*g*x-new_rho_mud*g*(h_end-x))/(rho_gas-new_rho_mud))
+#Sett inn i wolfram alpha
+
+a = (rho_frac-new_rho_mud)*g
+b = (new_rho_mud-rho_pore)*g*4500
+c = (V_influx_limit*P_pore*(rho_gas-new_rho_mud))/(A*rho_frac)
+
+x1=(-b+math.sqrt(b**2-4*a*c))/(2*a)
+x2=(-b-math.sqrt(b**2-4*a*c))/(2*a)
+
+print('X1:', x1, 'X2:', x2)
 
 
+#Choose the strongest and heaviest casing: P-110, 72 lbm/ft
+thickness_13_casing = 0.514
+od_13_casing = 13.375
+id_13_casing = 12.347
+nom_weight_threads_and_coupling = 107.15
+A_13_casing = (math.pi/4)*(((od_13_casing)*0.0254)**2-(id_13_casing*0.0254)**2)
 
+dry_mass_13_casing = nom_weight_threads_and_coupling*2000
 
+#Choose Buoyancy factor of 0.8 (just assume)
+sigma_a = ((0.8*dry_mass_13_casing*g)/A_13_casing)/10**5 #Pa
+print('Sigma_a:', round(sigma_a,2), 'bar')
+sigma_ys = 110000/14.5 #Psi to bar
 
+sigma_t_vs_ys = 0.5*(sigma_a/sigma_ys)+math.sqrt(1-0.75*((sigma_a/sigma_ys)**2))
+
+print('sigma_t =', round(sigma_t_vs_ys,3),'* sigma_ys')
+
+#Since sigma_t is higher (1.072 times sigma ys), this means the tension is more burst resistance due to axial tension. Therefore, more conservative to not consider axial tension
+
+P_burst = 2*sigma_ys*(thickness_13_casing/od_13_casing)
+print('P_burst:', round(P_burst,2), 'bar')
+
+used_SF = 1.1
+
+frac_gradient = (P_burst*(10**5)/(used_SF*g*h_start)+rho_gas)/1000 #Sg
+
+print('Fracture gradient:', frac_gradient, 'Sg')
 

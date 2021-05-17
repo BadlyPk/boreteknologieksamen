@@ -118,3 +118,5 @@ twist_ang = (L*torque_max)/(j_torsion*G)
 print('The pipe is turned:', math.ceil(twist_ang/(math.pi*2)), 'turns')
 
 
+
+

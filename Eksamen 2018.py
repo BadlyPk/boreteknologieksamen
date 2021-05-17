@@ -12,8 +12,8 @@ import Oving3
 
 #%%
 
-#For section 1 and 2, start at around 1.2 Sg, right above pore pressure
-#For section 3, gradually increase from 1.2 Sg to around 1.55 Sg
+#For section 1 and 2, use sea water, right above pore pressure
+#For section 3, gradually increase from 1.3 Sg to around 1.55 Sg
 #For section 4, greadually increase from 1.55 Sg to around 1.8 Sg
 #For section 5 keep it about 1.8-1.9 Sg
 
